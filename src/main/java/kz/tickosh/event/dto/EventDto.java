@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
  */
 @Value
 public class EventDto implements Serializable {
+    Long id;
     String name;
     String description;
     String location;
