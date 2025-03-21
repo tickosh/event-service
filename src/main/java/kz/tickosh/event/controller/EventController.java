@@ -19,8 +19,8 @@ public class EventController {
     private final EventService eventService;
 
     @GetMapping
-    public ResponseEntity<List<EventDto>> getEvents(@PageableDefault(size = 10) Pageable pageable) {
-        return ResponseEntity.ok(eventService.getEvents(pageable).getContent());
+    public ResponseEntity<Page<EventDto>> getEvents(@PageableDefault(size = 10) Pageable pageable) {
+        return ResponseEntity.ok(eventService.getEvents(pageable));
     }
 
     @GetMapping("/{id}")
