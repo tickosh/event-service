@@ -12,6 +12,8 @@ import java.time.LocalDateTime;
 @Setter
 public class Event extends BaseEntity {
     private String name;
+
+    @Column(columnDefinition = "TEXT")
     private String description;
     private String location;
     private LocalDateTime dateTime;
