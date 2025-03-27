@@ -1,6 +1,7 @@
 package kz.tickosh.event.service.impl;
 
-import kz.tickosh.event.dto.EventDto;
+import kz.tickosh.event.dto.response.EventDto;
+import kz.tickosh.event.enums.EventType;
 import kz.tickosh.event.exception.NotFoundException;
 import kz.tickosh.event.mapper.EventMapper;
 import kz.tickosh.event.model.Event;
@@ -20,8 +21,8 @@ public class EventServiceImpl implements EventService {
 
 
     @Override
-    public Page<EventDto> getEvents(Pageable pageable) {
-        return eventRepository.findAll(pageable).map(eventMapper::toDto);
+    public Page<EventDto> getEvents(Pageable pageable, String type) {
+        return eventRepository.findByEventType(pageable, EventType.valueOf(type)).map(eventMapper::toDto);
     }
 
     @Override

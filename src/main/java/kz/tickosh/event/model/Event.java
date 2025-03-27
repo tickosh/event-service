@@ -21,6 +21,7 @@ public class Event extends BaseEntity {
     private String ageRestriction;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "event_type", insertable = false, updatable = false)
     private EventType eventType;
 }
 

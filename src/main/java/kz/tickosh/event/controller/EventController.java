@@ -1,6 +1,6 @@
 package kz.tickosh.event.controller;
 
-import kz.tickosh.event.dto.EventDto;
+import kz.tickosh.event.dto.response.EventDto;
 import kz.tickosh.event.service.EventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -24,8 +25,9 @@ public class EventController {
     private final EventService eventService;
 
     @GetMapping
-    public ResponseEntity<Page<EventDto>> getEvents(@PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(eventService.getEvents(pageable));
+    public ResponseEntity<Page<EventDto>> getEvents(@PageableDefault(size = 20) Pageable pageable,
+                                                    @RequestParam(name = "type" , required = false) String type) {
+        return ResponseEntity.ok(eventService.getEvents(pageable, type));
     }
 
     @GetMapping("/{id}")
