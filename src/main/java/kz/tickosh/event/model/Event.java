@@ -1,10 +1,7 @@
 package kz.tickosh.event.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import kz.tickosh.event.enums.EventType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,6 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "event_type")
 public class Event extends BaseEntity {
     private String name;
 
@@ -21,5 +19,8 @@ public class Event extends BaseEntity {
     private String description;
     private String location;
     private String ageRestriction;
+
+    @Enumerated(EnumType.STRING)
+    private EventType eventType;
 }
 

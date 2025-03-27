@@ -4,6 +4,7 @@ import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.validation.constraints.NotNull;
 import kz.tickosh.event.enums.Language;
 import kz.tickosh.event.model.Event;
@@ -16,6 +17,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@DiscriminatorValue("MOVIE")
 public class MovieEvent extends Event {
 
     @ElementCollection

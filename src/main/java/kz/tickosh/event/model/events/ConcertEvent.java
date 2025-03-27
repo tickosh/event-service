@@ -1,5 +1,6 @@
 package kz.tickosh.event.model.events;
 
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.validation.constraints.NotNull;
@@ -13,6 +14,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@DiscriminatorValue("CONCERT")
 public class ConcertEvent extends Event {
     @NotNull
     private LocalDateTime startTime;
