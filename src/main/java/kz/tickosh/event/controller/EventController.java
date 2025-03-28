@@ -1,6 +1,6 @@
 package kz.tickosh.event.controller;
 
-import kz.tickosh.event.dto.response.EventDto;
+import kz.tickosh.event.dto.response.EventDTO;
 import kz.tickosh.event.service.EventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -25,27 +25,27 @@ public class EventController {
     private final EventService eventService;
 
     @GetMapping
-    public ResponseEntity<Page<EventDto>> getEvents(@PageableDefault(size = 20) Pageable pageable,
+    public ResponseEntity<Page<Object>> getEvents(@PageableDefault(size = 20) Pageable pageable,
                                                     @RequestParam(name = "type" , required = false) String type) {
         return ResponseEntity.ok(eventService.getEvents(pageable, type));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<EventDto> getEventById(@PathVariable Long id) {
-        return ResponseEntity.ok(eventService.getEventById(id));
-    }
+//    @GetMapping("/{id}")
+//    public ResponseEntity<EventDto> getEventById(@PathVariable Long id) {
+//        return ResponseEntity.ok(eventService.getEventById(id));
+//    }
 
-    @PostMapping
-    public ResponseEntity<Void> createEvent(@RequestBody EventDto event) {
-        eventService.createEvent(event);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Void> updateEvent(@PathVariable Long id, @RequestBody EventDto event) {
-        eventService.updateEvent(id, event);
-        return ResponseEntity.status(HttpStatus.OK).build();
-    }
+//    @PostMapping
+//    public ResponseEntity<Void> createEvent(@RequestBody EventDto event) {
+//        eventService.createEvent(event);
+//        return ResponseEntity.status(HttpStatus.CREATED).build();
+//    }
+//
+//    @PutMapping("/{id}")
+//    public ResponseEntity<Void> updateEvent(@PathVariable Long id, @RequestBody EventDto event) {
+//        eventService.updateEvent(id, event);
+//        return ResponseEntity.status(HttpStatus.OK).build();
+//    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {

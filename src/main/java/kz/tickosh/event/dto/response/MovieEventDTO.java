@@ -14,7 +14,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class MovieEventDto extends EventDto implements Serializable  {
+public class MovieEventDTO extends EventDTO implements Serializable  {
     @NotNull
     List<String> genres;
     String director;

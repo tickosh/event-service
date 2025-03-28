@@ -12,7 +12,7 @@ import java.time.LocalDate;
  */
 @Getter
 @Setter
-public class TheatreEventDto extends EventDto implements Serializable {
+public class TheatreEventDTO extends EventDTO implements Serializable {
     @NotNull
     LocalDate releaseDate;
     @NotNull

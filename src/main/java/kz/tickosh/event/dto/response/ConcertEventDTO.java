@@ -13,7 +13,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class ConcertEventDto extends EventDto implements Serializable {
+public class ConcertEventDTO extends EventDTO implements Serializable {
     @NotNull
     LocalDateTime startTime;
     String duration;

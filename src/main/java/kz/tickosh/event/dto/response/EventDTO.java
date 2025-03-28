@@ -11,7 +11,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class EventDto {
+public class EventDTO {
     Long id;
 
     @NotBlank(message = "Event name cannot be blank.")
