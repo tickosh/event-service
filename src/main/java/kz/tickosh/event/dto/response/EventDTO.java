@@ -2,12 +2,12 @@ package kz.tickosh.event.dto.response;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import kz.tickosh.event.enums.EventType;
+import kz.tickosh.event.model.event.Event;
 import lombok.Getter;
 import lombok.Setter;
 
 /**
- * DTO for {@link kz.tickosh.event.model.Event}
+ * DTO for {@link Event}
  */
 @Getter
 @Setter
@@ -27,5 +27,5 @@ public class EventDTO {
     String ageRestriction;
 
     @NotBlank(message = "Event type is required.")
-    EventType eventType;
+    EventTypeDTO eventType;
 }

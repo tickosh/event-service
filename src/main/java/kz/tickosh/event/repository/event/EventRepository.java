@@ -1,7 +1,7 @@
-package kz.tickosh.event.repository;
+package kz.tickosh.event.repository.event;
 
-import kz.tickosh.event.enums.EventType;
-import kz.tickosh.event.model.Event;
+import kz.tickosh.event.model.event.Event;
+import kz.tickosh.event.model.event.EventType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

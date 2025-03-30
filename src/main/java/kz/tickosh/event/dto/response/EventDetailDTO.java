@@ -1,6 +1,7 @@
-package kz.tickosh.event.dto.request;
+package kz.tickosh.event.dto.response;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,32 +10,24 @@ import java.util.List;
 
 @Getter
 @Setter
-public class CreateEventRequestDTO {
+public class EventDetailDTO {
+    Long id;
+
     @NotBlank(message = "Event name cannot be blank.")
-    private String name;
+    String name;
 
     @Size(max = 500, message = "Description cannot exceed 500 characters.")
-    private String description;
+    String description;
 
     @NotBlank(message = "Location is required.")
-    private String location;
+    String location;
 
     @NotBlank(message = "Age restriction is required.")
-    private String ageRestriction;
+    String ageRestriction;
 
     @NotBlank(message = "Event type is required.")
-    private Long eventTypeId;
+    EventTypeDTO eventType;
 
-    private List<CreateEventInfoRequestDTO> eventInfos;
-
-    @Getter
-    @Setter
-    public static class CreateEventInfoRequestDTO {
-        private Long id;
-        private Long eventInfoTypeId;
-        private String value;
-    }
+    @NotNull
+    List<EventInfoDTO> eventInfos;
 }
-
-
-
