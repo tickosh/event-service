@@ -1,5 +1,6 @@
 package kz.tickosh.event.controller;
 
+import jakarta.validation.Valid;
 import kz.tickosh.event.dto.request.CreateEventRequestDTO;
 import kz.tickosh.event.dto.response.EventDTO;
 import kz.tickosh.event.dto.response.EventDetailDTO;
@@ -39,7 +40,7 @@ public class EventController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> createEvent(@RequestBody CreateEventRequestDTO event) {
+    public ResponseEntity<Void> createEvent(@Valid @RequestBody CreateEventRequestDTO event) {
         eventService.createEvent(event);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -47,7 +48,7 @@ public class EventController {
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateEvent(
             @PathVariable Long id,
-            @RequestBody CreateEventRequestDTO event
+            @Valid @RequestBody CreateEventRequestDTO event
     ) {
         eventService.updateEvent(id, event);
         return ResponseEntity.status(HttpStatus.OK).build();
