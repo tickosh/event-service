@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import kz.tickosh.event.dto.request.CreateEventRequestDTO;
 import kz.tickosh.event.dto.response.EventDTO;
 import kz.tickosh.event.dto.response.EventDetailDTO;
+import kz.tickosh.event.dto.response.EventInfoTypeDTO;
+import kz.tickosh.event.dto.response.EventTypeDTO;
 import kz.tickosh.event.service.EventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -37,6 +41,16 @@ public class EventController {
     @GetMapping("/{id}")
     public ResponseEntity<EventDetailDTO> getEventById(@PathVariable Long id) {
         return ResponseEntity.ok(eventService.getEventById(id));
+    }
+
+    @GetMapping("/types")
+    public ResponseEntity<List<EventTypeDTO>> getEventTypes() {
+        return ResponseEntity.ok(eventService.getEventTypes());
+    }
+
+    @GetMapping("/info/types/{typeId}")
+    public ResponseEntity<List<EventInfoTypeDTO>> getEventTypesInfo(@PathVariable Long typeId) {
+        return ResponseEntity.ok(eventService.getEventTypesInfo(typeId));
     }
 
     @PostMapping

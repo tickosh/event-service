@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface EventInfoRepository extends JpaRepository<EventInfo, Long> {
     List<EventInfo> findEventInfoByEvent(Event event);
+    void deleteEventInfosByEvent(Event event);
 }

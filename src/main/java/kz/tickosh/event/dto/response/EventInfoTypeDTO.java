@@ -13,7 +13,6 @@ public class EventInfoTypeDTO implements Serializable {
     String nameKz;
     String nameRu;
     String nameEn;
-    EventTypeDTO eventType;
     String dataType;
     String prefix;
 }

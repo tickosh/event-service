@@ -3,6 +3,9 @@ package kz.tickosh.event.service.impl;
 import kz.tickosh.event.dto.request.CreateEventRequestDTO;
 import kz.tickosh.event.dto.response.EventDTO;
 import kz.tickosh.event.dto.response.EventDetailDTO;
+import kz.tickosh.event.dto.response.EventInfoTypeDTO;
+import kz.tickosh.event.dto.response.EventTypeDTO;
+import kz.tickosh.event.exception.NotFoundException;
 import kz.tickosh.event.mapper.EventInfoMapper;
 import kz.tickosh.event.mapper.EventInfoTypeMapper;
 import kz.tickosh.event.mapper.EventMapper;
@@ -19,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -39,7 +43,7 @@ public class EventServiceImpl implements EventService {
     public Page<EventDTO> getEvents(Pageable pageable, Long typeId) {
         if (typeId != null) {
             EventType eventType = eventTypeRepository.findById(typeId)
-                    .orElseThrow(() -> new IllegalArgumentException("Invalid event type ID"));
+                    .orElseThrow(() -> new NotFoundException("Invalid event type ID"));
             return eventRepository.findByEventType(pageable, eventType)
                     .map(eventMapper::toDto);
         } else {
@@ -51,7 +55,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public EventDetailDTO getEventById(Long id) {
         Event event = eventRepository.findEventById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Event not found"));
+                .orElseThrow(() -> new NotFoundException("Event not found"));
 
         List<EventInfo> eventInfos = eventInfoRepository.findEventInfoByEvent(event);
 
@@ -59,9 +63,22 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    public List<EventTypeDTO> getEventTypes() {
+        return eventTypeRepository.findAll().stream().map(eventTypeMapper::toDto).toList();
+    }
+
+    @Override
+    public List<EventInfoTypeDTO> getEventTypesInfo(Long typeId) {
+        return eventInfoTypeRepository.findEventInfoTypeByEventType(
+                eventTypeRepository.findById(typeId)
+                        .orElseThrow(() -> new NotFoundException("Not found by event type ID"))
+        ).stream().map(eventInfoTypeMapper::toDto).toList();
+    }
+
+    @Override
     public void createEvent(CreateEventRequestDTO eventRequest) {
         EventType eventType = eventTypeRepository.findById(eventRequest.getEventTypeId())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid event type ID"));
+                .orElseThrow(() -> new NotFoundException("Not found by event type ID"));
 
         Event event = eventMapper.toEntity(eventRequest, eventType);
         eventRepository.save(event);
@@ -72,10 +89,10 @@ public class EventServiceImpl implements EventService {
     @Override
     public void updateEvent(Long id, CreateEventRequestDTO eventRequest) {
         Event event = eventRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Event not found"));
+                .orElseThrow(() -> new NotFoundException("Event not found"));
 
         EventType eventType = eventTypeRepository.findById(eventRequest.getEventTypeId())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid event type ID"));
+                .orElseThrow(() -> new NotFoundException("Invalid event type ID"));
 
         eventMapper.partialUpdate(eventRequest, event, eventType);
         eventRepository.save(event);
@@ -89,23 +106,23 @@ public class EventServiceImpl implements EventService {
 
             if(eventInfoRequest.getId() != null) {
                 eventInfo = eventInfoRepository.findById(eventInfoRequest.getId())
-                        .orElseThrow(() -> new IllegalArgumentException("Invalid event info ID"));
+                        .orElseThrow(() -> new NotFoundException("Invalid event info ID"));
             }
 
             eventInfo.setEvent(event);
             eventInfo.setEventInfoType(eventInfoTypeRepository.findById(eventInfoRequest.getEventInfoTypeId())
-                    .orElseThrow(() -> new IllegalArgumentException("Invalid event info type ID")));
+                    .orElseThrow(() -> new NotFoundException("Invalid event info type ID")));
             eventInfo.setValue(eventInfoRequest.getValue());
             eventInfoRepository.save(eventInfo);
         }
     }
 
     @Override
+    @Transactional
     public void deleteEvent(Long id) {
-        if(eventRepository.existsById(id)) {
-            eventRepository.deleteById(id);
-        } else {
-            throw new IllegalArgumentException("Event not found");
-        }
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Event not found"));
+        eventInfoRepository.deleteEventInfosByEvent(event);
+        eventRepository.delete(event);
     }
 }

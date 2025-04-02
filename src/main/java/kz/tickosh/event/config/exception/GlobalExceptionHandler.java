@@ -1,16 +1,13 @@
 package kz.tickosh.event.config.exception;
 
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.ConstraintViolationException;
 import kz.tickosh.event.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import reactor.core.publisher.Mono;
-
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -32,15 +29,28 @@ public class GlobalExceptionHandler {
     /**
      * Validation exception handler
      */
-    @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<String> handleValidationException(ConstraintViolationException ex) {
-        Set<String> errorMessages = ex.getConstraintViolations()
-                .stream()
-                .map(ConstraintViolation::getMessage)
-                .collect(Collectors.toSet());
+    @ExceptionHandler(value = MethodArgumentNotValidException.class)
+    public Mono<ResponseEntity<ApiErrorResponse>> handleValidationException(
+            MethodArgumentNotValidException e) {
+        HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
 
-        String errorMessage = String.join(", ", errorMessages);
-        return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+        String errorMessage = e.getBindingResult().getAllErrors()
+                .stream()
+                .map(error -> {
+                    if (error instanceof FieldError) {
+                        return ((FieldError) error).getField() + ": " + error.getDefaultMessage();
+                    }
+                    return error.getDefaultMessage();
+                })
+                .reduce((first, second) -> first + ", " + second)
+                .orElse("Validation error");
+
+        ApiErrorResponse errorResponse = new ApiErrorResponse(
+                status.value(),
+                status.getReasonPhrase(),
+                errorMessage
+        );
+        return Mono.just(ResponseEntity.status(status).body(errorResponse));
     }
 
     /**
