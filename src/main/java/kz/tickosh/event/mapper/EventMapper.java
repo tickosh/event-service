@@ -1,16 +1,24 @@
 package kz.tickosh.event.mapper;
 
 import kz.tickosh.event.config.GlobalMapperConfig;
-import kz.tickosh.event.dto.EventDto;
-import kz.tickosh.event.model.Event;
+import kz.tickosh.event.dto.request.CreateEventRequestDTO;
+import kz.tickosh.event.dto.response.EventDTO;
+import kz.tickosh.event.dto.response.EventDetailDTO;
+import kz.tickosh.event.model.event.Event;
+import kz.tickosh.event.model.event.EventInfo;
+import kz.tickosh.event.model.event.EventType;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-@Mapper(config = GlobalMapperConfig.class)
+import java.util.List;
+
+@Mapper(config = GlobalMapperConfig.class, uses = {EventTypeMapper.class, EventInfoMapper.class})
 public interface EventMapper {
-    EventDto toDto(Event event);
+    EventDTO toDto(Event event);
 
-    Event toEntity(EventDto eventDto);
-
-    Event partialUpdate(EventDto eventDto, @MappingTarget Event event);
+    @Mapping(target = "eventInfos", source = "eventInfo")
+    EventDetailDTO toDetailDto(Event event, List<EventInfo> eventInfo);
+    Event toEntity(CreateEventRequestDTO eventCreateDto, EventType eventType);
+    Event partialUpdate(CreateEventRequestDTO eventDto, @MappingTarget Event event, EventType eventType);
 }
