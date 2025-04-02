@@ -1,11 +1,16 @@
 package kz.tickosh.event.config.exception;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import kz.tickosh.event.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import reactor.core.publisher.Mono;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -22,6 +27,20 @@ public class GlobalExceptionHandler {
                 ex.getMessage()
         );
         return Mono.just(ResponseEntity.status(status).body(errorResponse));
+    }
+
+    /**
+     * Validation exception handler
+     */
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<String> handleValidationException(ConstraintViolationException ex) {
+        Set<String> errorMessages = ex.getConstraintViolations()
+                .stream()
+                .map(ConstraintViolation::getMessage)
+                .collect(Collectors.toSet());
+
+        String errorMessage = String.join(", ", errorMessages);
+        return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
     }
 
     /**

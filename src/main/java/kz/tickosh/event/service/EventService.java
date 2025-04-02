@@ -1,13 +1,15 @@
 package kz.tickosh.event.service;
 
-import kz.tickosh.event.dto.EventDto;
+import kz.tickosh.event.dto.request.CreateEventRequestDTO;
+import kz.tickosh.event.dto.response.EventDTO;
+import kz.tickosh.event.dto.response.EventDetailDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface EventService {
-    Page<EventDto> getEvents(Pageable pageable);
-    EventDto getEventById(Long id);
-    void createEvent(EventDto event);
-    void updateEvent(Long id, EventDto event);
+    Page<EventDTO> getEvents(Pageable pageable, Long typeId);
+    EventDetailDTO getEventById(Long id);
+    void createEvent(CreateEventRequestDTO event);
+    void updateEvent(Long id, CreateEventRequestDTO event);
     void deleteEvent(Long id);
 }
