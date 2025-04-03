@@ -16,14 +16,17 @@ import kz.tickosh.event.model.event.EventType;
 import kz.tickosh.event.repository.event.EventInfoRepository;
 import kz.tickosh.event.repository.event.EventInfoTypeRepository;
 import kz.tickosh.event.repository.event.EventRepository;
+import kz.tickosh.event.repository.event.EventSpecification;
 import kz.tickosh.event.repository.event.EventTypeRepository;
 import kz.tickosh.event.service.EventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -40,16 +43,13 @@ public class EventServiceImpl implements EventService {
     private final EventInfoTypeMapper eventInfoTypeMapper;
 
     @Override
-    public Page<EventDTO> getEvents(Pageable pageable, Long typeId) {
-        if (typeId != null) {
-            EventType eventType = eventTypeRepository.findById(typeId)
-                    .orElseThrow(() -> new NotFoundException("Invalid event type ID"));
-            return eventRepository.findByEventType(pageable, eventType)
-                    .map(eventMapper::toDto);
-        } else {
-            return eventRepository.findAll(pageable)
-                    .map(eventMapper::toDto);
-        }
+    public Page<EventDTO> getEvents(Pageable pageable, Long typeId, LocalDateTime startDate, LocalDateTime endDate, String search) {
+        Specification<Event> spec = Specification.where(EventSpecification.hasTypeId(typeId))
+                .and(EventSpecification.hasStartDateAfter(startDate))
+                .and(EventSpecification.hasEndDateBefore(endDate))
+                .and(EventSpecification.hasSearchTerm(search));
+
+        return eventRepository.findAll(spec, pageable).map(eventMapper::toDto);
     }
 
     @Override

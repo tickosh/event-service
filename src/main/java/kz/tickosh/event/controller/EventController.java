@@ -10,6 +10,7 @@ import kz.tickosh.event.service.EventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -33,9 +35,12 @@ public class EventController {
     @GetMapping
     public ResponseEntity<Page<EventDTO>> getEvents(
             Pageable pageable,
-            @RequestParam(required = false) Long typeId
+            @RequestParam(required = false) Long typeId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
+            @RequestParam(required = false) String search
     ) {
-        return ResponseEntity.ok(eventService.getEvents(pageable, typeId));
+        return ResponseEntity.ok(eventService.getEvents(pageable, typeId, startDate, endDate, search));
     }
 
     @GetMapping("/{id}")

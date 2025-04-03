@@ -8,10 +8,11 @@ import kz.tickosh.event.dto.response.EventTypeDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface EventService {
-    Page<EventDTO> getEvents(Pageable pageable, Long typeId);
+    Page<EventDTO> getEvents(Pageable pageable, Long typeId, LocalDateTime startDate, LocalDateTime endDate, String search);
     EventDetailDTO getEventById(Long id);
     List<EventTypeDTO> getEventTypes();
     List<EventInfoTypeDTO> getEventTypesInfo(Long typeId);
