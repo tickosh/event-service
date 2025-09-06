@@ -1,5 +1,6 @@
 package kz.tickosh.event.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import kz.tickosh.event.dto.request.CreateEventRequestDTO;
 import kz.tickosh.event.dto.response.EventDTO;
@@ -31,6 +32,7 @@ public class EventController {
     private final EventService eventService;
 
     @GetMapping
+    @Operation(summary = "Get events with pagination and optional type filter")
     public ResponseEntity<Page<EventDTO>> getEvents(
             Pageable pageable,
             @RequestParam(required = false) Long typeId
