@@ -6,7 +6,6 @@ import kz.tickosh.event.dto.response.EventDetailDTO;
 import kz.tickosh.event.dto.response.EventInfoTypeDTO;
 import kz.tickosh.event.dto.response.EventTypeDTO;
 import kz.tickosh.event.exception.NotFoundException;
-import kz.tickosh.event.mapper.EventInfoMapper;
 import kz.tickosh.event.mapper.EventInfoTypeMapper;
 import kz.tickosh.event.mapper.EventMapper;
 import kz.tickosh.event.mapper.EventTypeMapper;
@@ -19,6 +18,7 @@ import kz.tickosh.event.repository.event.EventRepository;
 import kz.tickosh.event.repository.event.EventTypeRepository;
 import kz.tickosh.event.service.EventService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -34,9 +34,10 @@ public class EventServiceImpl implements EventService {
     private final EventInfoRepository eventInfoRepository;
     private final EventInfoTypeRepository eventInfoTypeRepository;
 
+    private final RabbitTemplate rabbitTemplate;
+
     private final EventMapper eventMapper;
     private final EventTypeMapper eventTypeMapper;
-    private final EventInfoMapper eventInfoMapper;
     private final EventInfoTypeMapper eventInfoTypeMapper;
 
     @Override
@@ -84,7 +85,12 @@ public class EventServiceImpl implements EventService {
         eventRepository.save(event);
 
         manipulateEventInfo(eventRequest, event);
+
+        var eventCreatedMessage = new EventCreatedMessage(event.getId(), event.getName());
+        rabbitTemplate.convertAndSend("events_exchange", "event.created", eventCreatedMessage);
     }
+
+    record EventCreatedMessage(Long eventId, String eventName) {}
 
     @Override
     public void updateEvent(Long id, CreateEventRequestDTO eventRequest) {
@@ -122,7 +128,6 @@ public class EventServiceImpl implements EventService {
     public void deleteEvent(Long id) {
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Event not found"));
-        eventInfoRepository.deleteEventInfosByEvent(event);
         eventRepository.delete(event);
     }
 }
